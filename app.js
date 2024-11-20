@@ -1,6 +1,6 @@
-// Commands that will be recognized by the terminal
+// Expanded commands object with descriptions for popular Linux commands
 const commands = {
-    ls: "about\nprojects\ncv",
+    ls: "author\nprojects\ncv",
     author: "This website was created by John Doe.",
     projects: "1. Project A\n2. Project B\n3. Project C",
     cv: "You can view the CV at: https://www.johndoe.com/cv",
@@ -15,7 +15,7 @@ const commands = {
     man: "Displays the manual for a command. Not implemented yet.",
     echo: "Outputs the text provided as arguments. Not implemented yet.",
     clear: "Clears the terminal screen. Not implemented yet.",
-    help: "Displays a help message with available commands.",
+    help: "Displays a list of available commands.",
     whoami: "Displays the current logged-in user. Not implemented yet.",
     uname: "Displays system information. Not implemented yet.",
     top: "Displays the system's resource usage. Not implemented yet.",
@@ -27,6 +27,12 @@ const commands = {
     find: "Searches for files and directories. Not implemented yet.",
     grep: "Searches for patterns within files. Not implemented yet.",
 };
+
+// Filter the commands that have been implemented
+function getImplementedCommands() {
+    return Object.keys(commands)
+    // return Object.keys(commands).filter(command => !commands[command].includes("Not implemented yet"));
+}
 
 // Handle user input and execute commands
 function handleCommand(command) {
@@ -70,7 +76,11 @@ document.getElementById("command-input").addEventListener("keydown", function(ev
 
         if (command) {
             // Handle the entered command
-            handleCommand(command);
+            if (command === 'help') {
+                handleHelpCommand()   
+            } else {
+                handleCommand(command);
+            }
         }
 
         // Clear the input field
@@ -81,8 +91,29 @@ document.getElementById("command-input").addEventListener("keydown", function(ev
 // Focus the input when the page loads
 window.onload = function() {
     const outputDiv = document.getElementById("output");
-    typeText("Dear Guest, welcome to my blog. Please type 'ls' to see available commands.\n", outputDiv, 100);
+    
+    // Initially, simulate typing "welcome to my blog"
+    typeText("welcome to my blog", outputDiv, 100);
+
+    // Focus the input field after the typing effect
     setTimeout(() => {
         document.getElementById("command-input").focus();
-    }, 2000);
+    }, 2000); // Wait for typing to finish before focusing input
 };
+
+// Handle 'help' command dynamically to list only implemented commands
+function handleHelpCommand() {
+    const implementedCommands = getImplementedCommands();
+    let response = "Available commands:\n\n";
+
+    implementedCommands.forEach(command => {
+        response += `${command}: ${commands[command]}\n`;
+    });
+
+    // Display the response in the terminal
+    const outputDiv = document.getElementById("output");
+    outputDiv.textContent += `$ help\n${response}\n\n`;
+
+    // Scroll to the bottom of the terminal
+    outputDiv.scrollTop = outputDiv.scrollHeight;
+}
